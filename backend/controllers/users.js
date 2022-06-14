@@ -8,6 +8,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, NODE_ENV } = process.env;
 
+const getCurrentUser = (req, res) => {
+  res.send(req.user);
+};
+
 const login = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email })
@@ -45,6 +49,7 @@ const getUsers = (req, res) => {
 
 const getUser = (req, res) => {
   const { id } = req.params;
+  // User.findById({ [id.$oid]: id })
   User.findById(id)
     .orFail(() => {
       throw new NotFoundError('User id not found.');
@@ -120,4 +125,5 @@ module.exports = {
   updateUser,
   updateUserAvatar,
   login,
+  getCurrentUser,
 };

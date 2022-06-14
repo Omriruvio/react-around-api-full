@@ -12,10 +12,6 @@ mongoose.connect('mongodb://0.0.0.0:27017/aroundb');
 
 app.use(express.json());
 app.use(helmet());
-app.use((req, res, next) => {
-  req.user = { _id: '628410cc3b24b82df2516edc' };
-  next();
-});
 app.use('/', usersRouter, cardsRouter);
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' });
