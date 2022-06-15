@@ -1,0 +1,22 @@
+.form-page__text-info {
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  margin-top: 15px;
+  transition: opacity ease 0.5s;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.form-page__text-info:hover {
+  opacity: 60%;
+}
+
+@media screen and (max-width: 650px) {
+  .form-page__text-info {
+    margin-top: 20px;
+    font-size: 12px;
+    line-height: 15px;
+  }
+  
+}

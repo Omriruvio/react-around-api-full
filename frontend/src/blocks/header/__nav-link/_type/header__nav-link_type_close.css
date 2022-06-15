@@ -1,0 +1,5 @@
+.header__nav-link_type_close {
+  transform: rotate(45deg);
+  width: 30px;
+  height: 30px;
+}

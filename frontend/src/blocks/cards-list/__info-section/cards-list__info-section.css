@@ -1,0 +1,8 @@
+.cards-list__info-section {
+  background-color: #fff;
+  padding: 25px 21px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+}

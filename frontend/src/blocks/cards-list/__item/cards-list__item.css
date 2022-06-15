@@ -1,0 +1,8 @@
+.cards-list__item {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  width: 282px;
+  position: relative;
+}

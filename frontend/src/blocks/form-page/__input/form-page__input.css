@@ -1,0 +1,8 @@
+.form-page__input {
+  all: unset;
+  border-bottom: 2px solid #ccc;
+  min-height: 27px;
+  line-height: 1.21;
+  font-size: 14px;
+  /* margin-bottom: 30px; */
+}

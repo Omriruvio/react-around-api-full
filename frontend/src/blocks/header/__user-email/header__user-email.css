@@ -1,0 +1,8 @@
+.header__user-email {
+  font-weight: 500;
+  line-height: 22px;
+  font-size: 18px;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

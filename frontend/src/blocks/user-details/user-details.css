@@ -1,0 +1,14 @@
+.user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  height: 0;
+  transition: height 0.3s ease-in-out;
+  border-bottom: 1px solid #545454;
+}
+
+.user-details_open {
+  height: 142px;
+}

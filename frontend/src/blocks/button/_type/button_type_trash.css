@@ -1,0 +1,13 @@
+.button_type_trash {
+  position: absolute;
+  width: 18px;
+  height: 19px;
+  top: 18px;
+  right: 15px;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+.button_type_trash:hover {
+  opacity: 60%;
+}
