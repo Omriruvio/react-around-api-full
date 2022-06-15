@@ -1,6 +1,15 @@
 const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { getUsers, getUser, createUser, updateUser, updateUserAvatar, login, getCurrentUser } = require('../controllers/users');
+// prettier-ignore
+const {
+  getUsers,
+  getUser,
+  createUser,
+  updateUser,
+  updateUserAvatar,
+  login,
+  getCurrentUser,
+} = require('../controllers/users');
 const auth = require('../middlewares/auth');
 
 const createUserSchema = celebrate({

@@ -80,10 +80,23 @@ const getUser = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar, email, password } = req.body;
+  // prettier-ignore
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
   if (!password) throw new ValidationError('Missing password field.');
   bcrypt.hash(password, 10).then((hash) => {
-    User.create({ name, about, avatar, email, password: hash })
+    User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    })
       .then((user) => {
         res.send(user);
       })
