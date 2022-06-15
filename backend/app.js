@@ -21,6 +21,13 @@ app.use(helmet());
 
 app.use(requestLogger);
 
+// remove this later
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
+
 app.use('/', usersRouter, cardsRouter);
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' });

@@ -5,7 +5,7 @@ const sendDefaultError = require('../utils/senddefaulterror');
 const ValidationError = require('../utils/validationerror');
 const NotFoundError = require('../utils/notfounderror');
 const AuthorizationError = require('../utils/authorizationerror');
-const { NOT_FOUND, BAD_REQUEST, UNAUTHORIZED } = require('../utils/httpstatuscodes');
+const { NOT_FOUND, BAD_REQUEST, UNAUTHORIZED, REQUEST_CONFLICT } = require('../utils/httpstatuscodes');
 
 const { JWT_SECRET, NODE_ENV } = process.env;
 
@@ -100,6 +100,7 @@ const createUser = (req, res) => {
         res.send(user);
       })
       .catch((err) => {
+        if (err.code === 11000) res.status(REQUEST_CONFLICT).send({ message: err.message });
         if (err.name === 'ValidationError') {
           const error = new ValidationError('Invalid user data received.');
           res.status(BAD_REQUEST).send({ message: error.message });
