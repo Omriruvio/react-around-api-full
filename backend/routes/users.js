@@ -20,18 +20,18 @@ const loginSchema = celebrate({
   }),
 });
 
-router.get('/users', getUsers);
+router.get('/users', auth, getUsers);
 
 router.get('/users/me', auth, getCurrentUser);
 
-router.get('/users/:id', getUser);
+router.get('/users/:id', auth, getUser);
 
 router.post('/signup', createUserSchema, createUser);
 
 router.post('/signin', loginSchema, login);
 
-router.patch('/users/me', updateUser);
+router.patch('/users/me', auth, updateUser);
 
-router.patch('/users/me/avatar', updateUserAvatar);
+router.patch('/users/me/avatar', auth, updateUserAvatar);
 
 module.exports = router;

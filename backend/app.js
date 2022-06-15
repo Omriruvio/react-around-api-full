@@ -4,22 +4,28 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
+const centralerrhandler = require('./middlewares/centralerrhandler');
+const { errors } = require('celebrate');
+const { errorLogger, requestLogger } = require('./middlewares/logger');
+const { PORT, NODE_ENV } = process.env;
 
 const app = express();
-const { PORT = 3000 } = process.env;
 
 mongoose.connect('mongodb://0.0.0.0:27017/aroundb');
 
 app.use(express.json());
 app.use(helmet());
+
+app.use(requestLogger);
+
 app.use('/', usersRouter, cardsRouter);
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Requested resource not found' });
 });
 
-app.listen(PORT);
+app.use(errorLogger);
 
-// process.on('uncaughtException', (err, origin) => {
-//   console.log(`${origin} ${err.name} with the message
-//   ${err.message} was not handled. Pay attention to it!`);
-// });
+app.use(errors());
+app.use(centralerrhandler);
+
+NODE_ENV !== 'test' && app.listen(PORT);

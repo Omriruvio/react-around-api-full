@@ -1,10 +1,10 @@
 const httpStatusCodes = require('./httpstatuscodes');
 
 class AuthorizationError extends Error {
-  constructor(message) {
+  constructor(message, statusCode) {
     super(message);
     this.name = 'AuthorizationError';
-    this.statusCode = httpStatusCodes.UNAUTHORIZED;
+    this.statusCode = statusCode || httpStatusCodes.UNAUTHORIZED;
   }
 }
 
