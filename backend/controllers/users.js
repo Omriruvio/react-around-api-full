@@ -63,7 +63,6 @@ const getUsers = (req, res) => {
 
 const getUser = (req, res) => {
   const { id } = req.params;
-  // User.findById({ [id.$oid]: id })
   User.findById(id)
     .orFail(() => {
       throw new NotFoundError('User id not found.');

@@ -8,15 +8,16 @@ const {
   likeCard,
   removeLike,
 } = require('../controllers/cards');
+const { createCardSchema, cardIdSchema } = require('./validation/schemas');
 
 router.get('/cards', getCards);
 
-router.post('/cards', auth, createCard);
+router.post('/cards', auth, createCardSchema, createCard);
 
-router.delete('/cards/:cardId', auth, deleteCard);
+router.delete('/cards/:cardId', auth, cardIdSchema, deleteCard);
 
-router.put('/cards/:cardId/likes', auth, likeCard);
+router.put('/cards/:cardId/likes', auth, cardIdSchema, likeCard);
 
-router.delete('/cards/:cardId/likes', auth, removeLike);
+router.delete('/cards/:cardId/likes', auth, cardIdSchema, removeLike);
 
 module.exports = router;

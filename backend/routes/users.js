@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const { celebrate, Joi } = require('celebrate');
 // prettier-ignore
 const {
   getUsers,
@@ -10,37 +9,28 @@ const {
   login,
   getCurrentUser,
 } = require('../controllers/users');
+// prettier-ignore
+const {
+  getUserSchema,
+  createUserSchema,
+  loginSchema,
+  updateUserSchema,
+  updateAvatarSchema,
+} = require('./validation/schemas');
 const auth = require('../middlewares/auth');
-
-const createUserSchema = celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().uri(),
-  }),
-});
-
-const loginSchema = celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-});
 
 router.get('/users', auth, getUsers);
 
 router.get('/users/me', auth, getCurrentUser);
 
-router.get('/users/:id', auth, getUser);
+router.get('/users/:id', auth, getUserSchema, getUser);
 
 router.post('/signup', createUserSchema, createUser);
 
 router.post('/signin', loginSchema, login);
 
-router.patch('/users/me', auth, updateUser);
+router.patch('/users/me', auth, updateUserSchema, updateUser);
 
-router.patch('/users/me/avatar', auth, updateUserAvatar);
+router.patch('/users/me/avatar', auth, updateAvatarSchema, updateUserAvatar);
 
 module.exports = router;
