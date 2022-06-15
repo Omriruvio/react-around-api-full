@@ -1,8 +1,9 @@
 const Card = require('../models/card');
 const ValidationError = require('../utils/validationerror');
 const NotFoundError = require('../utils/notfounderror');
-const { NOT_FOUND, BAD_REQUEST } = require('../utils/httpstatuscodes');
+const { NOT_FOUND, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN } = require('../utils/httpstatuscodes');
 const sendDefaultError = require('../utils/senddefaulterror');
+const AuthorizationError = require('../utils/authorizationerror');
 
 const getCards = (req, res) => {
   Card.find({})
@@ -30,13 +31,18 @@ const createCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findOne({ _id: req.params.cardId })
     .then((card) => {
-      if (!card) throw new NotFoundError('Invalid card id.');
-      res.send(card);
+      if (!card) throw new NotFoundError('Card not found.');
+      if (card.owner != req.user._id) throw new AuthorizationError('Unaothorized card deletion request', 403);
+      return Card.findByIdAndRemove(req.params.cardId).then((card) => {
+        res.send(card);
+      });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err instanceof AuthorizationError) {
+        res.status(FORBIDDEN).send({ message: err.message });
+      } else if (err.name === 'CastError') {
         const error = new ValidationError('Invalid card data received.');
         res.status(BAD_REQUEST).send({ message: error.message });
       } else if (err instanceof NotFoundError) {

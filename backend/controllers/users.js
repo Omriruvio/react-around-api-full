@@ -15,6 +15,7 @@ const getCurrentUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email })
+    .select('+password')
     .orFail(() => {
       throw new AuthorizationError('Incorrect email or password.');
     })

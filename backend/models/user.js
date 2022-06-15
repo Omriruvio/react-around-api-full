@@ -3,6 +3,12 @@ const urlValidator = require('../utils/url-validator');
 const isEmail = require('validator/lib/isEmail');
 
 const userSchema = new mongoose.Schema({
+  password: {
+    type: String,
+    required: true,
+    minlength: 8,
+    select: false,
+  },
   name: {
     type: String,
     default: 'Jacques Cousteau',
@@ -28,11 +34,6 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     validate: { validator: isEmail, message: 'Email is not valid.' },
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8,
   },
 });
 

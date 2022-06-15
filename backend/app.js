@@ -7,7 +7,7 @@ const cardsRouter = require('./routes/cards');
 const centralerrhandler = require('./middlewares/centralerrhandler');
 const { errors } = require('celebrate');
 const { errorLogger, requestLogger } = require('./middlewares/logger');
-const { PORT, NODE_ENV } = process.env;
+const { PORT = 3000, NODE_ENV } = process.env;
 
 const app = express();
 
