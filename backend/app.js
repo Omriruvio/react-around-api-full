@@ -1,15 +1,15 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
+const { errors } = require('celebrate');
+const centralerrhandler = require('./middlewares/centralerrhandler');
+const { errorLogger, requestLogger } = require('./middlewares/logger');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
-const centralerrhandler = require('./middlewares/centralerrhandler');
-const { errors } = require('celebrate');
-const { errorLogger, requestLogger } = require('./middlewares/logger');
-const { PORT = 3000, NODE_ENV } = process.env;
-const cors = require('cors');
 
+const { PORT = 3000, NODE_ENV } = process.env;
 const app = express();
 
 mongoose.connect('mongodb://0.0.0.0:27017/aroundb');
@@ -31,4 +31,4 @@ app.use(errorLogger);
 app.use(errors());
 app.use(centralerrhandler);
 
-NODE_ENV !== 'test' && app.listen(PORT);
+if (NODE_ENV !== 'test') app.listen(PORT);

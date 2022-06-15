@@ -4,8 +4,8 @@ import React from 'react';
 
 export default function Card(props) {
   const currentUser = React.useContext(CurrentUserContext);
-  const isOwn = currentUser._id === props.card.owner._id;
-  const isLiked = props.card.likes.some(({ _id }) => _id === currentUser._id);
+  const isOwn = currentUser._id === props.card.owner;
+  const isLiked = props.card.likes.some((id) => id === currentUser._id);
   const cardLikeButtonClassName = isLiked ? `button like-button like-button_active` : `button like-button`;
 
   const handleClick = () => props.onCardClick(props.card);

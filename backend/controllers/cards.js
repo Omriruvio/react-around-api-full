@@ -1,7 +1,7 @@
 const Card = require('../models/card');
 const ValidationError = require('../utils/validationerror');
 const NotFoundError = require('../utils/notfounderror');
-const { NOT_FOUND, BAD_REQUEST, UNAUTHORIZED, FORBIDDEN } = require('../utils/httpstatuscodes');
+const { NOT_FOUND, BAD_REQUEST, FORBIDDEN } = require('../utils/httpstatuscodes');
 const sendDefaultError = require('../utils/senddefaulterror');
 const AuthorizationError = require('../utils/authorizationerror');
 
@@ -35,8 +35,8 @@ const deleteCard = (req, res) => {
     .then((card) => {
       if (!card) throw new NotFoundError('Card not found.');
       if (card.owner != req.user._id) throw new AuthorizationError('Unaothorized card deletion request', 403);
-      return Card.findByIdAndRemove(req.params.cardId).then((card) => {
-        res.send(card);
+      return Card.findByIdAndRemove(req.params.cardId).then((deletedCard) => {
+        res.send(deletedCard);
       });
     })
     .catch((err) => {

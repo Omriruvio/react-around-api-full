@@ -121,11 +121,12 @@ function App() {
   const handleLogin = ({ email, password }) => {
     setIsLoading(true);
     authenticate({ email, password })
-      .then((user) => {
-        // receives user.token
+      .then(async (user) => {
         localStorage.setItem('jwt', user.token);
+        const loggedUser = await validateToken(user.token);
+        api.setUserToken(user.token);
         setIsLoggedIn(true);
-        setCurrentUser({ ...currentUser, email });
+        setCurrentUser(loggedUser);
         navigate('/');
       })
       .catch((err) => {
@@ -157,26 +158,24 @@ function App() {
   };
 
   useEffect(() => {
-    const getUserInfoFromAPI = () => {
-      return api.init();
-    };
-    const getUserInfoFromToken = () => {
-      const jwt = localStorage.getItem('jwt');
-      if (jwt) return validateToken(jwt);
-    };
-
-    Promise.allSettled([getUserInfoFromAPI(), getUserInfoFromToken()])
-      .then((values) => {
-        const [cards, userFromAPI] = values[0].value; // handle API info
-        const userFromToken = values[1].value ? values[1].value.data : null; // handle localstorage data
+    api
+      .getInitialCards()
+      .then((cards) => {
+        cards.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setCards(cards);
-        setCurrentUser({ ...userFromToken, ...userFromAPI });
-        if (userFromToken) {
-          setIsLoggedIn(true);
-          navigate('/');
-        }
       })
       .catch((err) => console.log(err));
+
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      validateToken(jwt)
+        .then((user) => {
+          setCurrentUser(user);
+          setIsLoggedIn(true);
+          navigate('/');
+        })
+        .catch((err) => console.log(err));
+    }
 
     const closeByEscape = (e) => {
       if (e.key === 'Escape') {

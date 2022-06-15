@@ -1,11 +1,12 @@
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const sendDefaultError = require('../utils/senddefaulterror');
 const ValidationError = require('../utils/validationerror');
 const NotFoundError = require('../utils/notfounderror');
 const AuthorizationError = require('../utils/authorizationerror');
 const { NOT_FOUND, BAD_REQUEST, UNAUTHORIZED } = require('../utils/httpstatuscodes');
-const sendDefaultError = require('../utils/senddefaulterror');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+
 const { JWT_SECRET, NODE_ENV } = process.env;
 
 const getCurrentUser = (req, res) => {
@@ -30,18 +31,16 @@ const login = (req, res) => {
   const { email, password } = req.body;
   User.findOne({ email })
     .select('+password')
-    .orFail(() => {
-      throw new AuthorizationError('Incorrect email or password.');
-    })
-    .then((user) => {
-      return bcrypt.compare(password, user.password).then((match) => {
+    .orFail(() => new AuthorizationError('Incorrect email or password.'))
+    .then((user) =>
+      bcrypt.compare(password, user.password).then((match) => {
         if (!match) {
           throw new AuthorizationError('Incorrect email or password.');
         }
         const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' });
         res.send({ token });
-      });
-    })
+      })
+    )
     .catch((err) => {
       if (err instanceof AuthorizationError) {
         res.status(UNAUTHORIZED).send({ message: err.message });
