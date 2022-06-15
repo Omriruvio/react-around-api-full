@@ -63,7 +63,7 @@ const Login = (props) => {
           className={`form-page__input`}
           name="passwordInput"
           required
-          minLength="2"
+          minLength="8"
           maxLength="200"
           placeholder="Password"
         />

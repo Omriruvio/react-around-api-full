@@ -4,15 +4,16 @@ class Api {
     this._rootUrl = rootUrl;
   }
 
-  _fetch = ({ url, method, data }) =>
-    fetch(`${this._rootUrl}${url}`, {
+  _fetch = ({ url, method, data }) => {
+    return fetch(`${this._rootUrl}${url}`, {
       method,
       headers: {
-        authorization: this._authToken,
+        authorization: `Bearer ${this._authToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     }).then(this._handleResponse);
+  };
 
   _handleResponse = (res) => (res.ok ? res.json() : Promise.reject(`Error: ${res.status}`));
 
@@ -37,6 +38,7 @@ class Api {
   };
 }
 
-console.log(localStorage.getItem('jwt'));
-const api = new Api('56f31c8f-aa7f-4de2-944b-6ed636e2c354', 'https://around.nomoreparties.co/v1/group-12/');
+const jwt = localStorage.getItem('jwt');
+const api = new Api(jwt, 'https://api.omriruvio.students.nomoreparties.sbs/');
+// const api = new Api('56f31c8f-aa7f-4de2-944b-6ed636e2c354', 'https://around.nomoreparties.co/v1/group-12/');
 export default api;

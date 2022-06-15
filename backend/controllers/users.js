@@ -9,7 +9,21 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET, NODE_ENV } = process.env;
 
 const getCurrentUser = (req, res) => {
-  res.send(req.user);
+  User.findById(req.user._id)
+    .orFail(() => {
+      throw new NotFoundError('User id not found.');
+    })
+    .then((user) => {
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        const error = new ValidationError('Invalid user id received.');
+        res.status(BAD_REQUEST).send({ message: error.message });
+      } else if (err instanceof NotFoundError) {
+        res.status(NOT_FOUND).send({ message: err.message });
+      } else sendDefaultError(res, err);
+    });
 };
 
 const login = (req, res) => {

@@ -8,11 +8,14 @@ const centralerrhandler = require('./middlewares/centralerrhandler');
 const { errors } = require('celebrate');
 const { errorLogger, requestLogger } = require('./middlewares/logger');
 const { PORT = 3000, NODE_ENV } = process.env;
+const cors = require('cors');
 
 const app = express();
 
 mongoose.connect('mongodb://0.0.0.0:27017/aroundb');
 
+app.use(cors());
+app.options('*', cors());
 app.use(express.json());
 app.use(helmet());
 
