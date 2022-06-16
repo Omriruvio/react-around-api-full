@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import CurrentUserContext from '../contexts/CurrentUserContext';
@@ -16,15 +16,9 @@ import UserDetails from './UserDetails';
 import { register, authenticate, validateToken } from '../utils/auth';
 import Register from './Register';
 import Login from './Login';
+import { popupReducer, popupReset } from './reducers/popupReducer';
 
 function App() {
-  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
-  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
-  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  const [isConfirmPopupOpen, setIsConfirmPopupOpen] = React.useState(false);
-  const [isAuthOkPopupOpen, setIsAuthOkPopupOpen] = React.useState(false);
-  const [isAuthErrPopupOpen, setIsAuthErrPopupOpen] = React.useState(false);
-  const [isUserDetailsOpen, setIsUserDetailsOpen] = React.useState(false);
   const [selectedCard, setSelectedCard] = React.useState(null);
   const [cardToDelete, setCardToDelete] = React.useState(null);
   const [currentUser, setCurrentUser] = React.useState({});
@@ -33,6 +27,7 @@ function App() {
   const [isMobileSized, setIsMobileSized] = React.useState(window.innerWidth <= 650);
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [popupState, popupDispatch] = useReducer(popupReducer, popupReset(), popupReset);
   const navigate = useNavigate();
 
   const handleResize = () => setWindowWidth(window.innerWidth);
@@ -86,7 +81,7 @@ function App() {
 
   const handleCardDeleteClick = (card) => {
     setCardToDelete(card);
-    setIsConfirmPopupOpen(true);
+    popupDispatch({ type: 'open delete confirm' });
   };
 
   const handleConfirmDeleteClick = () => {
@@ -109,11 +104,11 @@ function App() {
       .then((user) => {
         // receives user.data._id user.data.email
         // optionally log user in here
-        setIsAuthOkPopupOpen(true);
+        popupDispatch({ type: 'open auth ok' });
         navigate('/signin');
       })
       .catch((err) => {
-        setIsAuthErrPopupOpen(true);
+        popupDispatch({ type: 'open auth err' });
       })
       .finally(() => setIsLoading(false));
   };
@@ -131,7 +126,7 @@ function App() {
       })
       .catch((err) => {
         console.log(err);
-        setIsAuthErrPopupOpen(true);
+        popupDispatch({ type: 'open auth err' });
       })
       .finally(() => setIsLoading(false));
   };
@@ -139,22 +134,17 @@ function App() {
   const handleLogout = () => {
     // setCurrentUser({});
     setIsLoggedIn(false);
-    setIsUserDetailsOpen(false);
+    popupDispatch({ type: 'close user details' });
     localStorage.removeItem('jwt');
   };
 
   const handleHamburgerClick = () => {
-    setIsUserDetailsOpen(!isUserDetailsOpen);
+    popupDispatch({ type: 'toggle user details' });
   };
 
   const closeAllPopups = () => {
-    setIsEditAvatarPopupOpen(false);
-    setIsEditProfilePopupOpen(false);
-    setIsAddPlacePopupOpen(false);
-    setIsConfirmPopupOpen(false);
+    popupDispatch({ type: 'close all popups' });
     setSelectedCard(null);
-    setIsAuthOkPopupOpen(false);
-    setIsAuthErrPopupOpen(false);
   };
 
   useEffect(() => {
@@ -188,7 +178,7 @@ function App() {
       document.removeEventListener('keydown', closeByEscape);
       window.removeEventListener('resize', handleResize);
     };
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     setIsMobileSized(windowWidth <= 650);
@@ -197,41 +187,41 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <InfoTooltip isOpen={isAuthOkPopupOpen} onClose={closeAllPopups} isSuccessful={true} onPopupClick={handlePopupClick} />
-        <InfoTooltip isOpen={isAuthErrPopupOpen} onClose={closeAllPopups} isSuccessful={false} onPopupClick={handlePopupClick} />
+        <InfoTooltip isOpen={popupState.isAuthOkPopupOpen} onClose={closeAllPopups} isSuccessful={true} onPopupClick={handlePopupClick} />
+        <InfoTooltip isOpen={popupState.isAuthErrPopupOpen} onClose={closeAllPopups} isSuccessful={false} onPopupClick={handlePopupClick} />
         <EditProfilePopup
           onPopupClick={handlePopupClick}
           isLoading={isLoading}
           onUpdateUser={handleUpdateUser}
-          isOpen={isEditProfilePopupOpen}
+          isOpen={popupState.isEditProfilePopupOpen}
           onClose={closeAllPopups}
         />
         <AddPlacePopup
           onPopupClick={handlePopupClick}
           isLoading={isLoading}
           onAddPlaceSubmit={handleAddPlaceSubmit}
-          isOpen={isAddPlacePopupOpen}
+          isOpen={popupState.isAddPlacePopupOpen}
           onClose={closeAllPopups}
         />
         <EditAvatarPopup
           onPopupClick={handlePopupClick}
           isLoading={isLoading}
           onUpdateAvatar={handleUpdateAvatar}
-          isOpen={isEditAvatarPopupOpen}
+          isOpen={popupState.isEditAvatarPopupOpen}
           onClose={closeAllPopups}
         />
         <DeleteConfirmPopup
           handlePopupClick={handlePopupClick}
           handleDeleteConfirm={handleConfirmDeleteClick}
-          isOpen={isConfirmPopupOpen}
+          isOpen={popupState.isConfirmPopupOpen}
           handleCloseClick={closeAllPopups}
           isLoading={isLoading}
         />
         <ImagePopup card={selectedCard} onClose={closeAllPopups} onPopupClick={handlePopupClick} />
-        {isUserDetailsOpen && isMobileSized && <UserDetails handleLogout={handleLogout} />}
+        {popupState.isUserDetailsOpen && isMobileSized && <UserDetails handleLogout={handleLogout} />}
         <Header
           isMobileSized={isMobileSized}
-          isDropDownOpen={isUserDetailsOpen}
+          isDropDownOpen={popupState.isUserDetailsOpen}
           handleHamburgerClick={handleHamburgerClick}
           handleLogout={handleLogout}
           isLoggedIn={isLoggedIn}
@@ -244,9 +234,9 @@ function App() {
             element={
               <ProtectedRoute redirectPath="/signin" isLoggedIn={isLoggedIn}>
                 <Main
-                  onEditProfileClick={setIsEditProfilePopupOpen}
-                  onAddPlaceClick={setIsAddPlacePopupOpen}
-                  onEditAvatarClick={setIsEditAvatarPopupOpen}
+                  onEditProfileClick={() => popupDispatch({ type: 'open edit profile' })}
+                  onAddPlaceClick={() => popupDispatch({ type: 'open add place' })}
+                  onEditAvatarClick={() => popupDispatch({ type: 'open edit avatar' })}
                   onCardClick={setSelectedCard}
                   cards={cards}
                   onCardLike={handleCardLike}
