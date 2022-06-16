@@ -9,7 +9,10 @@ export default function AddPlacePopup(props) {
 
   React.useEffect(() => {
     setInputs({});
-    if (!isOpen) setErrorFields({});
+    if (!isOpen) {
+      setErrorFields({});
+      setIsValid(true);
+    }
   }, [isOpen]);
 
   const handleSubmit = (event) => {

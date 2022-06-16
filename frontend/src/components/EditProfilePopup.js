@@ -10,7 +10,10 @@ export default function EditProfilePopup(props) {
   const currentUser = React.useContext(CurrentUserContext);
 
   React.useEffect(() => {
-    if (!isOpen) setErrorFields({});
+    if (!isOpen) {
+      setErrorFields({});
+      setIsValid(true);
+    }
   }, [isOpen]);
 
   React.useEffect(() => {
