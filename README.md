@@ -6,4 +6,4 @@ This repository contains the full API of "Around the U.S." project that features
 
 [Around the US front end - React](https://github.com/Omriruvio/react-around-auth 'Front end - React')
 
-[Around the US website](omriruvio.students.nomoreparties.sbs 'Around the US website')
+[Around the US website](https://omriruvio.students.nomoreparties.sbs 'Around the US website')
